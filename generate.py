@@ -1,3 +1,5 @@
+import re
+
 banner = """
  _    _               _   _     _        
 | |  | |             | | (_)   | |       
@@ -9,43 +11,74 @@ banner = """
 
 words = []
 
-def addPerson():
-    prompts = ["Name", "Relation", "Other words"]
+def getData(prompts):
     inputs = [input(prompt+": ") for prompt in prompts]
     for inp in inputs:
         if inp:
-            words.extend(inp.split(" "))
+            if re.match("^\d{1,2}/\d{1,2}/\d{4}$", inp):
+                words.extend(inp.lower().split("/"))
+            words.extend(inp.lower().split(" "))
+
+def addPerson():
+    prompts = ["Name", "Relation", "Date of birth", "Other words"]
+    getData(prompts)
     
 def addAnimal():
-    pass
+    prompts = ["Name", "Species", "Date of birth", "Other words"]
+    getData(prompts)
 
 def addLocation():
-    pass
+    prompts = ["Name", "Country", "Date",  "Other words"]
+    getData(prompts)
 
 def addWorkplace():
-    pass
+    prompts = ["Name", "City", "Date",  "Other words"]
+    getData(prompts)
 
 def addSchool():
-    pass
+    prompts = ["Name", "City", "Date", "Class", "Other words"]
+    getData(prompts)
 
 def addDate():
-    pass
+    prompts = ["Description", "Date", "Other words"]
+    getData(prompts)
 
 def addOldPassword():
-    pass
+    prompts = ["Password"]
+    getData(prompts)
 
 def addOtherWord():
-    pass
+    prompts = ["Words"]
+    getData(prompts)
 
 def geneateList():
     filename = input("Filename: ")
     passwords = []
     for word1 in words:
-        password.append(word1)
+        passwords.append(word1)
+        passwords.append(word1[0].upper()+word1[1:])
         for word2 in words:
-            password.ap
+            if (word1 == word2):
+                continue
+            passwords.append(word1+word2)
+            passwords.append(word1[0].upper()+word1[1:]+word2)
+            passwords.append(word1[0].upper()+word1[1:]+word2[0].upper()+word2[1:])
+            for word3 in words:
+                if (word2 == word3):
+                    continue
+                passwords.append(word1+word2+word3)
+                passwords.append(word1[0].upper()+word1[1:]+word2+word3)
+                passwords.append(word1[0].upper()+word1[1:]+word2[0].upper()+word2[1:]+word3[0].upper()+word3[1:])
+    
     with open(filename, "w") as f:
-
+        for password in passwords:
+            for i in range(2010, 2025):
+                f.write(password+str(i)+"\n")
+                f.write(password+str(i)+"!\n")
+                f.write(password+"\n")
+                f.write(password+"!\n")
+    print("Done! Happy cracking!")
+    exit(0)
 
 commands = [
     ("Add person", addPerson),
@@ -55,7 +88,7 @@ commands = [
     ("Add school", addSchool),
     ("Add date", addDate),
     ("Add old password", addOldPassword),
-    ("Add other word", addOtherWord)
+    ("Add other word", addOtherWord),
     ("Generate list", geneateList)
 ]
 
@@ -72,8 +105,9 @@ def parseOption(option):
         inp = input("Are you sure you want to quit? (y/N)")
         if inp.lower() == "y":
             exit(0)
-    except:
-        print("Invalid option")
+    except Exception as e:
+        print(e)
+        #print("Invalid option")
 
 def main():
     print(banner)
